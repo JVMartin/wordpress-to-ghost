@@ -2,4 +2,6 @@
 /.idea
 /dist
 
+.env
+wp.sql
 ghost.json
