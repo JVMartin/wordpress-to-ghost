@@ -1,3 +1,6 @@
 /node_modules
 /.idea
 /dist
+
+wp.xml
+ghost.json
