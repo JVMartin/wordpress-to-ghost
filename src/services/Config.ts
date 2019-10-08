@@ -55,8 +55,7 @@ export class Config {
   }
 
   private checkRequiredVars(): void {
-    const requiredVars = [
-    ];
+    const requiredVars: string[] = [];
 
     const missingVars = requiredVars.reduce((vars: string[], v: string) => {
       if (!process.env[v]) {
