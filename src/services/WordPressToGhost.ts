@@ -42,7 +42,7 @@ export class WordPressToGhost {
 
     const rows: any[] = await this.mySqlClient.query('SELECT * from wp_users');
 
-    return _.map(rows, (row): IGhostUser => {
+    return _.map(rows, (row: any): IGhostUser => {
       return {
         id: row.ID,
         name: row.display_name,
