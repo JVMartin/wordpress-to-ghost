@@ -16,4 +16,18 @@ import { WordPressToGhost } from './services/WordPressToGhost';
   const ghostJson = await wordPressToGhost.wordPressToGhostJson();
   fileWriter.writeJsonToFile(ghostJson, 'ghost.json');
   mySqlClient.end();
-})();
+})().catch((e: Error) => {
+  /**
+   * This is the only exception handler in the application.
+   * Exceptions should not be caught anywhere else.
+   * See:
+   * https://web.archive.org/web/20190716190534/https://wiki.c2.com/?DontCatchExceptions
+   *
+   * This is also the only place we explicitly use the console, since there may
+   * be an error / issue with our Pino logger.
+   */
+
+  // tslint:disable-next-line:no-console
+  console.error(e.stack);
+  process.exit(1);
+});
