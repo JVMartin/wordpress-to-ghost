@@ -20,12 +20,11 @@
   "author": "",
   "dependencies": {
     "mysql": "2.17.1",
-    "pino": "5.13.2",
-    "typemoq": "2.1.0"
+    "pino": "5.13.2"
   },
   "devDependencies": {
     "@types/jest": "24.0.18",
-    "@types/mysql": "^2.15.7",
+    "@types/mysql": "2.15.7",
     "@types/node": "12.7.11",
     "@types/pino": "5.20.0",
     "dotenv": "8.1.0",
@@ -35,6 +34,7 @@
     "ts-jest": "24.1.0",
     "ts-node": "8.4.1",
     "tslint": "5.20.0",
+    "typemoq": "2.1.0",
     "typescript": "3.6.3"
   }
 }
