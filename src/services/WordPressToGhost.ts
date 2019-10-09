@@ -1,4 +1,5 @@
 import { Logger } from 'pino';
+import * as _ from 'lodash';
 
 import { IGhostJson, IGhostMeta, IGhostPost, IGhostTag, IGhostUser } from '../types/GhostJson';
 
@@ -39,7 +40,15 @@ export class WordPressToGhost {
   private async getUsers(): Promise<IGhostUser[]> {
     this.logger.trace(`${WordPressToGhost.name}::getUsers`);
 
-    return [];
+    const rows: any[] = await this.mySqlClient.query('SELECT * from wp_users');
+
+    return _.map(rows, (row): IGhostUser => {
+      return {
+        id: row.ID,
+        name: row.display_name,
+        email: row.user_email,
+      };
+    });
   }
 
   private getMeta(): IGhostMeta {
