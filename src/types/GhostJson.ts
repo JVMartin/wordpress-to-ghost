@@ -25,6 +25,7 @@ export interface IGhostPost {
   mobiledoc: string;
   // epoch time in ms
   published_at: number;
+  published_by: number;
 }
 
 export interface IGhostTag {

@@ -19,7 +19,8 @@
   },
   "author": "",
   "dependencies": {
-    "lodash": "^4.17.15",
+    "@tryghost/html-to-mobiledoc": "0.6.0",
+    "lodash": "4.17.15",
     "mysql": "2.17.1",
     "pino": "5.13.2"
   },

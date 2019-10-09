@@ -1,5 +1,7 @@
 import { Logger } from 'pino';
 import * as _ from 'lodash';
+// @ts-ignore
+import { toMobiledoc } from '@tryghost/html-to-mobiledoc';
 
 import { IGhostJson, IGhostMeta, IGhostPost, IGhostTag, IGhostUser } from '../types/GhostJson';
 
@@ -12,7 +14,6 @@ export class WordPressToGhost {
 
   public async wordPressToGhostJson(): Promise<IGhostJson> {
     this.logger.trace(`${WordPressToGhost.name}::migrate`);
-    this.logger.trace(`${this.mySqlClient}`);
 
     return {
       meta: this.getMeta(),
@@ -28,7 +29,21 @@ export class WordPressToGhost {
   private async getPosts(): Promise<IGhostPost[]> {
     this.logger.trace(`${WordPressToGhost.name}::getPosts`);
 
-    return [];
+    const rows: any[] = await this.mySqlClient.query(`
+      SELECT * from wp_posts
+      WHERE post_type='post'
+      AND post_status='publish'
+    `);
+
+    return _.map(rows, (row: any): IGhostPost => {
+      return {
+        id: row.ID,
+        mobiledoc: JSON.stringify(toMobiledoc(row.post_content)),
+        published_at: (row.post_date as Date).valueOf(),
+        published_by: row.post_author,
+        title: row.post_title,
+      };
+    });
   }
 
   private async getTags(): Promise<IGhostTag[]> {
