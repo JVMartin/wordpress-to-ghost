@@ -1,0 +1,115 @@
+# NOTE:
+# We cannot use "-alpine" because it is straight up missing glibc.
+# See: https://github.com/pact-foundation/pact-node/issues/119#issuecomment-426102662
+# Also, this must match the version used in the Dockerfile.
+image: node:10.16
+
+stages:
+  - install-deps
+  - test
+
+install-deps:
+  stage: install-deps
+  script:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+    - npm install
+    - npm prune
+  artifacts:
+    paths:
+      - node_modules/
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+  only:
+    - merge_requests
+    - master
+
+build:
+  stage: test
+  script:
+    - npm run build
+  dependencies:
+    - install-deps
+  artifacts:
+    paths:
+      - dist/
+      - assets/
+  only:
+    - merge_requests
+    - master
+
+lint:
+  stage: test
+  script:
+    - npm run lint
+  dependencies:
+    - install-deps
+  only:
+    - merge_requests
+    - master
+
+prettier:
+  stage: test
+  script:
+    - npm run prettier-check
+  dependencies:
+    - install-deps
+  only:
+    - merge_requests
+    - master
+
+test-unit:
+  stage: test
+  script:
+    - npm run test-unit
+  dependencies:
+    - install-deps
+  only:
+    - merge_requests
+    - master
+
+#prune-dev-deps:
+#  stage: test
+#  script:
+#    - npm prune --production
+#  dependencies:
+#    - install-deps
+#  artifacts:
+#    paths:
+#      - node_modules/
+#  only:
+#    - merge_requests
+#    - master
+
+#docker-publish:
+#  image: docker:stable
+#  stage: docker-publish
+#  services:
+#    - docker:dind
+#  variables:
+#    DOCKER_TLS_CERTDIR: ""
+#  script:
+#    - echo "$CI_JOB_TOKEN" | docker login --username gitlab-ci-token --password-stdin $CI_REGISTRY
+#    - SANITIZED_BRANCH=`echo ${CI_COMMIT_REF_NAME} | sed 's/[^a-zA-Z0-9-]//g'`
+#    - FLOATING_REF=$CI_REGISTRY_IMAGE:branch-$SANITIZED_BRANCH
+#    - FULL_REF=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-branch-$SANITIZED_BRANCH
+#    # Use the latest build from this branch as a cache
+#    - docker pull $FLOATING_REF || true
+#    - |
+#      docker build \
+#        --cache-from $FLOATING_REF \
+#        --tag $FLOATING_REF \
+#        --tag $FULL_REF \
+#        --build-arg GIT_SHA1=$CI_COMMIT_SHA \
+#        .
+#    - docker push $FLOATING_REF
+#    - docker push $FULL_REF
+#  dependencies:
+#    - build
+#    - prune-dev-deps
+#  tags:
+#    - dind
+#  only:
+#    - merge_requests
+#    - master
