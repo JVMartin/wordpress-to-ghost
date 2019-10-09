@@ -4,10 +4,7 @@ export interface IGhostJson {
   data: {
     posts: IGhostPost[];
     tags: IGhostTag[];
-    posts_tags: Array<{
-      tag_id: number;
-      post_id: number;
-    }>;
+    posts_tags: IGhostPostTag[];
     users: IGhostUser[];
   };
 }
@@ -22,15 +19,25 @@ export interface IGhostMeta {
 export interface IGhostPost {
   id: number;
   title: string;
+  slug: string;
   mobiledoc: string;
   // epoch time in ms
   published_at: number;
+  published_by: number;
+  updated_at: number;
+  updated_by: number;
 }
 
 export interface IGhostTag {
   id: number;
   name: string;
+  slug: string;
   description: string;
+}
+
+export interface IGhostPostTag {
+  tag_id: number;
+  post_id: number;
 }
 
 export interface IGhostUser {
