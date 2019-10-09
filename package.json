@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
-    "dev": "npm run clean && tsc --watch",
+    "dev": "ts-node -r dotenv/config src/main.ts",
     "lint": "tslint 'src/**/*.ts' --format verbose",
     "lint-fix": "npm run lint -- --fix",
     "prettier": "prettier '**/*.ts' '**/*.tsx' '**/*.json'",
@@ -18,17 +18,21 @@
   },
   "author": "",
   "dependencies": {
-    "pino": "^5.13.2",
-    "typemoq": "^2.1.0"
+    "mysql": "2.17.1",
+    "pino": "5.13.2",
+    "typemoq": "2.1.0"
   },
   "devDependencies": {
     "@types/jest": "24.0.18",
+    "@types/mysql": "^2.15.7",
     "@types/node": "12.7.11",
     "@types/pino": "5.20.0",
+    "dotenv": "8.1.0",
     "jest": "24.9.0",
     "prettier": "1.18.2",
     "rimraf": "3.0.0",
     "ts-jest": "24.1.0",
+    "ts-node": "8.4.1",
     "tslint": "5.20.0",
     "typescript": "3.6.3"
   }

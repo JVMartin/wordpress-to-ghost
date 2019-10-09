@@ -15,6 +15,26 @@ export class Config {
    */
   public readonly logLevel: Level;
 
+  /**
+   * Environment variable: MYSQL_HOST
+   */
+  public readonly mySqlHost: string;
+
+  /**
+   * Environment variable: MYSQL_DATABASE
+   */
+  public readonly mySqlDatabase: string;
+
+  /**
+   * Environment variable: MYSQL_USERNAME
+   */
+  public readonly mySqlUsername: string;
+
+  /**
+   * Environment variable: MYSQL_PASSWORD
+   */
+  public readonly mySqlPassword: string;
+
   constructor() {
     this.checkRequiredVars();
 
@@ -40,6 +60,10 @@ export class Config {
      */
     // We can safely cast these to strings because we already called
     // checkRequiredVars();
+    this.mySqlHost = process.env.MYSQL_HOST as string;
+    this.mySqlDatabase = process.env.MYSQL_DATABASE as string;
+    this.mySqlUsername = process.env.MYSQL_USERNAME as string;
+    this.mySqlPassword = process.env.MYSQL_PASSWORD as string;
   }
 
   /**
@@ -47,15 +71,25 @@ export class Config {
    * DO NOT log any secrets here!
    */
   public logConfigSafely(logger: Logger): void {
-    logger.info({
-      config: {
-        logLevel: this.logLevel,
+    logger.info(
+      {
+        config: {
+          logLevel: this.logLevel,
+          mySqlHost: this.mySqlHost,
+          mySqlDatabase: this.mySqlDatabase,
+        },
       },
-    });
+      'Application configuration',
+    );
   }
 
   private checkRequiredVars(): void {
-    const requiredVars: string[] = [];
+    const requiredVars: string[] = [
+      'MYSQL_HOST',
+      'MYSQL_DATABASE',
+      'MYSQL_USERNAME',
+      'MYSQL_PASSWORD',
+    ];
 
     const missingVars = requiredVars.reduce((vars: string[], v: string) => {
       if (!process.env[v]) {
