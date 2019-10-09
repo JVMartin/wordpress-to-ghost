@@ -20,22 +20,11 @@ export class WordPressToGhost {
   constructor(private readonly logger: Logger, private readonly mySqlClient: MySqlClient) {}
 
   public async wordPressToGhostJson(): Promise<IGhostJson> {
-    this.logger.trace(`${WordPressToGhost.name}::migrate`);
+    this.logger.trace(`${WordPressToGhost.name}::${this.wordPressToGhostJson.name}`);
 
-    const posts = await this.getPosts();
-
-    const postIdMap = _.reduce(
-      posts,
-      (map, ghostPost) => {
-        return {
-          ...map,
-          [ghostPost.id]: true,
-        };
-      },
-      {},
-    );
-
-    const [tags, postTags]: [IGhostTag[], IGhostPostTag[]] = await this.getTagsAndPostTags(
+    const posts = await this.scrapePosts();
+    const postIdMap = this.postsToPostIdMap(posts);
+    const [tags, postTags]: [IGhostTag[], IGhostPostTag[]] = await this.scrapeTagsAndPostTags(
       postIdMap,
     );
 
@@ -45,13 +34,35 @@ export class WordPressToGhost {
         posts,
         tags,
         posts_tags: postTags,
-        users: await this.getUsers(),
+        users: await this.scrapeUsers(),
       },
     };
   }
 
-  private async getPosts(): Promise<IGhostPost[]> {
-    this.logger.trace(`${WordPressToGhost.name}::getPosts`);
+  /**
+   * Create a map that takes a post id as the key and returns true
+   * if the post exists.
+   */
+  private postsToPostIdMap(posts: IGhostPost[]): { [id: number]: boolean } {
+    this.logger.trace(`${WordPressToGhost.name}::${this.postsToPostIdMap.name}`);
+
+    return _.reduce(
+      posts,
+      (map, ghostPost) => {
+        return {
+          ...map,
+          [ghostPost.id]: true,
+        };
+      },
+      {},
+    );
+  }
+
+  /**
+   * Scrape the WordPress database for users.
+   */
+  private async scrapePosts(): Promise<IGhostPost[]> {
+    this.logger.trace(`${WordPressToGhost.name}::${this.scrapePosts.name}`);
 
     const rows: any[] = await this.mySqlClient.query(`
       SELECT * from wp_posts
@@ -76,10 +87,13 @@ export class WordPressToGhost {
     );
   }
 
-  private async getTagsAndPostTags(postIdMap: {
+  /**
+   * Scrape the WordPress database for tags and posts_tags.
+   */
+  private async scrapeTagsAndPostTags(postIdMap: {
     [value: number]: boolean;
   }): Promise<[IGhostTag[], IGhostPostTag[]]> {
-    this.logger.trace(`${WordPressToGhost.name}::getTags`);
+    this.logger.trace(`${WordPressToGhost.name}::${this.scrapeTagsAndPostTags.name}`);
 
     const rows = await this.mySqlClient.query(`
       SELECT name, slug, object_id as post_id
@@ -123,8 +137,11 @@ export class WordPressToGhost {
     return [ghostTags, ghostPostTags];
   }
 
-  private async getUsers(): Promise<IGhostUser[]> {
-    this.logger.trace(`${WordPressToGhost.name}::getUsers`);
+  /**
+   * Scrape the WordPress database for users.
+   */
+  private async scrapeUsers(): Promise<IGhostUser[]> {
+    this.logger.trace(`${WordPressToGhost.name}::${this.scrapeUsers.name}`);
 
     const rows: any[] = await this.mySqlClient.query('SELECT * from wp_users');
 
@@ -141,7 +158,7 @@ export class WordPressToGhost {
   }
 
   private getMeta(): IGhostMeta {
-    this.logger.trace(`${WordPressToGhost.name}::getMeta`);
+    this.logger.trace(`${WordPressToGhost.name}::${this.getMeta.name}`);
 
     return {
       exported_on: Date.now(),

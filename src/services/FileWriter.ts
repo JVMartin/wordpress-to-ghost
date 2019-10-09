@@ -5,7 +5,7 @@ export class FileWriter {
   constructor(private readonly logger: Logger) {}
 
   public writeJsonToFile(json: any, path: string): void {
-    this.logger.trace(`${FileWriter.name}::writeJsonToFile`);
+    this.logger.trace(`${FileWriter.name}::${this.writeJsonToFile.name}`);
 
     fs.writeFileSync(path, JSON.stringify(json, null, 2));
   }

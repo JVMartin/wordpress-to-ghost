@@ -36,8 +36,8 @@ export interface IGhostTag {
 }
 
 export interface IGhostPostTag {
-  tag_id: number;
   post_id: number;
+  tag_id: number;
 }
 
 export interface IGhostUser {
