@@ -9,12 +9,13 @@
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
     "dev": "ts-node -r dotenv/config src/main.ts",
+    "test": "npm run test-unit",
+    "test-unit": "jest -c jest.unit.config.js",
     "lint": "tslint 'src/**/*.ts' --format verbose",
     "lint-fix": "npm run lint -- --fix",
     "prettier": "prettier '**/*.ts' '**/*.tsx' '**/*.json'",
     "prettier-write": "npm run prettier -- --write",
-    "prettier-check": "npm run prettier -- --check",
-    "test": "jest -c jest.unit.config.js"
+    "prettier-check": "npm run prettier -- --check"
   },
   "author": "",
   "dependencies": {
