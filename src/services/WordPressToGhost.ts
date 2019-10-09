@@ -73,11 +73,13 @@ export class WordPressToGhost {
     return _.map(
       rows,
       (row: any): IGhostPost => {
+        const mobiledoc = toMobiledoc(row.post_content);
+
         return {
           id: row.ID,
           title: row.post_title,
           slug: row.post_name,
-          mobiledoc: JSON.stringify(toMobiledoc(row.post_content)),
+          mobiledoc: JSON.stringify(this.massageMobiledoc(row.ID, mobiledoc)),
           published_at: (row.post_date as Date).valueOf(),
           published_by: row.post_author,
           updated_at: (row.post_modified as Date).valueOf(),
@@ -85,6 +87,26 @@ export class WordPressToGhost {
         };
       },
     );
+  }
+
+  /**
+   * Make the mobiledoc conform to Ghost's needs.
+   */
+  private massageMobiledoc(postId: number, mobiledoc: any): any {
+    if (postId === 12890) {
+      for (const card of mobiledoc.cards) {
+        // Can't include an invalid URL
+        if (
+          card[1] &&
+          card[1].caption &&
+          card[1].caption.includes('http://The level of bullshittiness')
+        ) {
+          delete card[1].caption;
+        }
+      }
+    }
+
+    return mobiledoc;
   }
 
   /**
